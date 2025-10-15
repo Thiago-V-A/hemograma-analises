@@ -47,7 +47,7 @@ Esta camada é responsável pela interface do usuário e pela entrega de informa
 
 | Componente | Tecnologia | Propósito no Projeto |
 | :--- | :--- | :--- |
-| **Aplicativo Móvel (Frontend)** | **React Native** ou **Flutter** (Definição pendente) | Interface do App Android para consulta de alertas e visualização de hemogramas. |
+| **Aplicativo Móvel (Frontend)** | **React Native com Expo**| Interface do App Android para consulta de alertas e visualização de hemogramas. |
 | **Notificações Ubíquas** | **Firebase Cloud Messaging (FCM)** | Serviço para o envio de **notificações push em tempo real** do Backend para o App (Requisito de Ubiquidade). |
 
 ### 2. Camada de Aplicação e Domínio (Backend Core)
