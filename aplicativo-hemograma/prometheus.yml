@@ -1,0 +1,42 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  - job_name: 'hemogram-monitoring'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['app:8080']
+        labels:
+          application: 'hemogram-monitoring'
+
+  # ============ .env.example ============
+  # Banco de Dados
+  DB_HOST=localhost
+  DB_PORT=5432
+  DB_NAME=hemogram_db
+  DB_USER=postgres
+  DB_PASSWORD=your-secure-password
+  
+  # FHIR Server
+  FHIR_SERVER_URL=http://hapi.fhir.org/baseR4
+  FHIR_SUBSCRIPTION_ENDPOINT=https://your-domain.com/api/fhir/subscription
+  
+  # Firebase
+  FIREBASE_ENABLED=true
+  FIREBASE_CREDENTIALS=classpath:firebase-credentials.json
+  
+  # Analytics
+  ANALYTICS_WINDOW_HOURS=24
+  ANALYTICS_INTERVAL=15
+  THRESHOLD_MIN_HEMOGRAMS=30
+  THRESHOLD_ALERT_PROPORTION=0.40
+  THRESHOLD_TREND_INCREASE=20
+  
+  # Notificações
+  NOTIFICATION_ENABLED=true
+  
+  # Segurança
+  JWT_SECRET=your-jwt-secret-key-change-in-production
+  KEYSTORE_PASSWORD=changeit
+  TRUSTSTORE_PASSWORD=changeit

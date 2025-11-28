@@ -1,0 +1,146 @@
+server:
+  port: 8080
+  ssl:
+    enabled: true
+    key-store: classpath:keystore.p12
+    key-store-password: ${KEYSTORE_PASSWORD:changeit}
+    key-store-type: PKCS12
+    key-alias: hemogram-server
+    client-auth: need
+    trust-store: classpath:truststore.p12
+    trust-store-password: ${TRUSTSTORE_PASSWORD:changeit}
+
+spring:
+  application:
+    name: hemogram-monitoring
+
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:hemogram_db}
+    username: ${DB_USER:postgres}
+    password: ${DB_PASSWORD:postgres}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 20
+      minimum-idle: 5
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+        use_sql_comments: true
+        jdbc:
+          batch_size: 20
+        order_inserts: true
+        order_updates: true
+
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    locations: classpath:db/migration
+
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+    time-zone: America/Sao_Paulo
+
+# FHIR Configuration
+fhir:
+  server:
+    url: ${FHIR_SERVER_URL:http://hapi.fhir.org/baseR4}
+    timeout: 30000
+  subscription:
+    endpoint: ${FHIR_SUBSCRIPTION_ENDPOINT:https://localhost:8080/api/fhir/subscription}
+    enabled: true
+
+# Firebase Configuration
+firebase:
+  credentials-path: ${FIREBASE_CREDENTIALS:classpath:firebase-credentials.json}
+  enabled: ${FIREBASE_ENABLED:true}
+
+# Analytics Configuration
+analytics:
+  window:
+    size-hours: ${ANALYTICS_WINDOW_HOURS:24}
+    evaluation-interval-minutes: ${ANALYTICS_INTERVAL:15}
+  thresholds:
+    min-hemograms: ${THRESHOLD_MIN_HEMOGRAMS:30}
+    alert-proportion: ${THRESHOLD_ALERT_PROPORTION:0.40}
+    trend-increase-percent: ${THRESHOLD_TREND_INCREASE:20}
+
+  # Valores de referência para hemogramas
+  reference-values:
+    leukocytes:
+      min: 4000
+      max: 11000
+      unit: /µL
+    platelets:
+      min: 150000
+      max: 450000
+      unit: /µL
+    hemoglobin:
+      male-min: 13.5
+      male-max: 17.5
+      female-min: 12.0
+      female-max: 16.0
+      unit: g/dL
+    neutrophils:
+      min: 40
+      max: 70
+      unit: "%"
+    lymphocytes:
+      min: 20
+      max: 45
+      unit: "%"
+
+# Notification Configuration
+notification:
+  enabled: ${NOTIFICATION_ENABLED:true}
+  batch-size: 100
+  retry-attempts: 3
+  retry-delay-ms: 5000
+
+# Actuator Configuration
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: always
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+
+# Logging Configuration
+logging:
+  level:
+    root: INFO
+    br.gov.saude.hemogram: DEBUG
+    org.springframework.web: INFO
+    org.hibernate: WARN
+    ca.uhn.fhir: INFO
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+  file:
+    name: logs/hemogram-monitoring.log
+    max-size: 10MB
+    max-history: 30
+
+# Security Configuration
+security:
+  jwt:
+    secret: ${JWT_SECRET:your-secret-key-change-in-production}
+    expiration: 86400000 # 24 hours
+  mtls:
+    enabled: true
+    required-client-cert: true
